@@ -186,6 +186,17 @@ IXML_Element *Document::GetRootElement(IXML_Document *doc)
 	return reinterpret_cast<IXML_Element *>(ixmlNode_getFirstChild(&doc->n));
 }
 
+/*!
+ * \brief Frees the given document.
+ *
+ * \note Any nodes extracted via any other interface function will become
+ * invalid after this call unless explicitly cloned.
+ */
+inline void Document::Free(IXML_Document *doc)
+{
+	ixmlDocument_free(doc);
+}
+
 namespace Element {
 
 /*!
@@ -671,17 +682,17 @@ bool CUPnPService::Execute(
 	if (ret != UPNP_E_SUCCESS) {
 		UPnP::ProcessErrorMessage(
 			"UpnpSendAction", ret, NULL, RespDoc);
-		ixmlDocument_free(ActionDoc);
-		ixmlDocument_free(RespDoc);
+		IXML::Document::Free(ActionDoc);
+		IXML::Document::Free(RespDoc);
 		return false;
 	}
-	ixmlDocument_free(ActionDoc);
+	IXML::Document::Free(ActionDoc);
 
 	// Check the response document
 	UPnP::ProcessActionResponse(RespDoc, action.GetName());
 
 	// Free the response document
-	ixmlDocument_free(RespDoc);
+	IXML::Document::Free(RespDoc);
 
 	return true;
 }
@@ -1187,7 +1198,7 @@ upnpDiscovery:
 					d_event->Location, d_event->Expires);
 			}
 			// Free the XML doc tree
-			ixmlDocument_free(doc);
+			IXML::Document::Free(doc);
 		}
 		break;
 	}
@@ -1410,8 +1421,6 @@ void CUPnPControlPoint::OnEventReceived(
 		msg << "\n    Empty property list.";
 	}
 	AddDebugLogLineC(logUPnP, msg);
-	// Freeing that doc segfaults. Probably should not be freed.
-	//ixmlDocument_free(ChangedVariablesDoc);
 }
 
 
@@ -1473,6 +1482,7 @@ void CUPnPControlPoint::Subscribe(CUPnPService &service)
 		IXML_Element *scpdRoot = IXML::Document::GetRootElement(scpdDoc);
 		CUPnPSCPD *scpd = new CUPnPSCPD(*this, scpdRoot, service.GetAbsSCPDURL());
 		service.SetSCPD(scpd);
+		IXML::Document::Free(scpdDoc);
 		m_ServiceMap[service.GetAbsEventSubURL()] = &service;
 		msg << "Successfully retrieved SCPD Document for service " <<
 			service.GetServiceType() << ", absEventSubURL: " <<
