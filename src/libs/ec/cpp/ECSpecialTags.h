@@ -30,7 +30,7 @@
 #include "../../../NetworkFunctions.h"	// Needed for IsLowID
 #include "../../../ClientCredits.h"		// Needed for EIdentState
 #include <common/Format.h>	// Needed for CFormat
-
+#include "../../../kademlia/utils/UInt128.h"
 
 #include <map>
 
@@ -65,6 +65,7 @@ class CValueMap {
 		std::map<ec_tagname_t, uint32> m_map_uint32;
 		std::map<ec_tagname_t, uint64> m_map_uint64;
 		std::map<ec_tagname_t, CMD4Hash> m_map_md4;
+		std::map<ec_tagname_t, CUInt128> m_map_uint128;
 		std::map<ec_tagname_t, wxString> m_map_string;
 		std::map<ec_tagname_t, CECTag> m_map_tag;
 
@@ -88,6 +89,7 @@ class CValueMap {
 			m_map_uint32 = valuemap.m_map_uint32;
 			m_map_uint64 = valuemap.m_map_uint64;
 			m_map_md4 = valuemap.m_map_md4;
+			m_map_uint128 = valuemap.m_map_uint128;
 			m_map_string = valuemap.m_map_string;
 			m_map_tag = valuemap.m_map_tag;
 		}
@@ -115,6 +117,11 @@ class CValueMap {
 		void CreateTag(ec_tagname_t tagname, CMD4Hash value, CECTag *parent)
 		{
 			CreateTagT<CMD4Hash>(tagname, value, m_map_md4, parent);
+		}
+
+		void CreateTag(ec_tagname_t tagname, CUInt128 value, CECTag *parent)
+		{
+			CreateTagT<CUInt128>(tagname, value, m_map_uint128, parent);
 		}
 
 		void CreateTag(ec_tagname_t tagname, wxString value, CECTag *parent)
@@ -201,6 +208,7 @@ class CEC_ConnState_Tag : public CECTag {
 		bool	IsConnectedKademlia()	const { return (GetInt() & 0x04) != 0; }
 		bool	IsKadFirewalled()	const { return (GetInt() & 0x08) != 0; }
 		bool	IsKadRunning()	const { return (GetInt() & 0x10) != 0; }
+		bool	GetKadID(CUInt128& target)	const { return AssignIfExist(EC_TAG_KAD_ID, target); }
 };
 
 class CEC_SharedFile_Tag : public CECTag {
