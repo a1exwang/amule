@@ -229,7 +229,7 @@ common_sources = \
 
 # Libs
 
-core_libs = -L. -lmuleappcore $(LIBUPNP_LDFLAGS) $(LIBUPNP_LIBS)
+core_libs = -L. -lmuleappcore $(LIBUPNP_LDFLAGS) $(LIBUPNP_LIBS) -L./amulemgr -lawserver -lboost_system -lpthread -latomic 
 gui_libs = -L. -lmuleappgui $(WX_LIBS) $(GEOIP_LDFLAGS) $(GEOIP_LIBS)
 remote_common_libs = -Llibs/common -Llibs/ec/cpp -lmulecommon -lec $(BFD_LIBS) $(ZLIB_LDFLAGS) $(ZLIB_LIBS) $(RESOLV_LIB)
 common_libs = -L. -lmuleappcommon $(remote_common_libs) -lmulesocket $(BOOST_SYSTEM_LDFLAGS) $(BOOST_SYSTEM_LIBS) $(CRYPTOPP_LDFLAGS) $(CRYPTOPP_LIBS)

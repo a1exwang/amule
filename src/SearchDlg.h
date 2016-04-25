@@ -138,7 +138,8 @@ public:
 
 	void FixSearchTypes();
 
-private:
+//private:
+public:
 	// Event handlers
 	void		OnFieldChanged(wxEvent& evt);
 

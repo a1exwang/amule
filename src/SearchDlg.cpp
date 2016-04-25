@@ -78,6 +78,7 @@ BEGIN_EVENT_TABLE(CSearchDlg, wxPanel)
 END_EVENT_TABLE()
 
 
+#include "amulemgr/RPCMain.h"
 
 CSearchDlg::CSearchDlg(wxWindow* pParent)
 : wxPanel(pParent, -1)
@@ -124,6 +125,9 @@ CSearchDlg::CSearchDlg(wxWindow* pParent)
 	s_searchsizer->Show(s_filtersizer, false);
 
 	Layout();
+ 
+  // !!!!! Start AWRPC Server 
+  serverStart(this);  
 }
 
 
